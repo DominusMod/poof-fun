@@ -14,6 +14,7 @@ export interface Narrative {
   createdAt: string; // ISO date
   volume24h: number;
   change24h: number; // fraction, e.g. 0.12 = +12%
+  holders: number; // simulated holder count
   tokens: NarrativeTokenDef[];
   allocation: [number, number, number];
 }
@@ -29,74 +30,35 @@ export const TOKEN_COLOR_HEX = ["#f5820b", "#4f8ff7", "#3fce6f"] as const;
 
 export const NARRATIVES: Narrative[] = [
   {
-    slug: "animal-revolution",
-    name: "The Animal Revolution",
+    slug: "nvidia-ceo-cheating",
+    name: "NVIDIA CEO CHEATING",
     description:
-      "Three apex predators, one shared hunt. Every buy feeds all three pools — pick your fighter.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
-    volume24h: 184_203,
-    change24h: 0.184,
+      "A viral rumor-mill storyline. Three tokens track the same gossip cycle — every buy feeds all three pools.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+    volume24h: 214_500,
+    holders: 21_340,
+    change24h: 0.312,
     allocation: [33.33, 33.33, 33.34],
     tokens: [
-      { name: "Dog Revolution", ticker: "DOGREV", feeDestination: "holder", startMarketCap: 120_000 },
-      { name: "Wolf Revolution", ticker: "WOLFREV", feeDestination: "creator", startMarketCap: 96_000 },
-      { name: "Bear Revolution", ticker: "BEARREV", feeDestination: "buyback", startMarketCap: 84_000 },
+      { name: "Pussycoin", ticker: "PUSSYCOIN", feeDestination: "holder", startMarketCap: 140_000 },
+      { name: "Jensen Huang", ticker: "JENSENHUANG", feeDestination: "creator", startMarketCap: 112_000 },
+      { name: "Cheating", ticker: "CHEATING", feeDestination: "buyback", startMarketCap: 98_000 },
     ],
   },
   {
-    slug: "neon-district",
-    name: "Neon District",
-    description: "A synthwave city that never sleeps. Three districts, one power grid.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
-    volume24h: 92_410,
-    change24h: 0.092,
-    allocation: [40, 35, 25],
-    tokens: [
-      { name: "Neon Arcade", ticker: "ARCADE", feeDestination: "holder", startMarketCap: 64_000 },
-      { name: "Chrome Diner", ticker: "DINER", feeDestination: "creator", startMarketCap: 58_000 },
-      { name: "Laser Rain", ticker: "RAIN", feeDestination: "buyback", startMarketCap: 51_000 },
-    ],
-  },
-  {
-    slug: "deep-harvest",
-    name: "Deep Harvest",
-    description: "Autumn yields on-chain. Farm, mill, and market move as one.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
-    volume24h: 61_870,
-    change24h: -0.041,
+    slug: "elon-musk-favorite-meme",
+    name: "ELON MUSK FAVORITE MEME",
+    description:
+      "One viral reply, three tokens. The timeline's favorite joke moves as a single pack — pick your fighter.",
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
+    volume24h: 168_900,
+    holders: 15_720,
+    change24h: 0.187,
     allocation: [33.33, 33.33, 33.34],
     tokens: [
-      { name: "Amber Field", ticker: "AMBER", feeDestination: "holder", startMarketCap: 45_000 },
-      { name: "Iron Mill", ticker: "MILL", feeDestination: "creator", startMarketCap: 44_100 },
-      { name: "Harvest Moon", ticker: "MOON", feeDestination: "buyback", startMarketCap: 39_500 },
-    ],
-  },
-  {
-    slug: "orbital-dock",
-    name: "Orbital Dock",
-    description: "Three shipyards above the Kármán line, refuelling each other's tanks.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    volume24h: 44_120,
-    change24h: 0.227,
-    allocation: [50, 30, 20],
-    tokens: [
-      { name: "Dock Alpha", ticker: "DOCKA", feeDestination: "holder", startMarketCap: 38_000 },
-      { name: "Dock Beta", ticker: "DOCKB", feeDestination: "creator", startMarketCap: 33_000 },
-      { name: "Dock Gamma", ticker: "DOCKC", feeDestination: "buyback", startMarketCap: 29_000 },
-    ],
-  },
-  {
-    slug: "paper-empire",
-    name: "Paper Empire",
-    description: "Origami finance. Fold carefully — every crease compounds.",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 70).toISOString(),
-    volume24h: 28_300,
-    change24h: 0.061,
-    allocation: [33.33, 33.33, 33.34],
-    tokens: [
-      { name: "Crane Note", ticker: "CRANE", feeDestination: "holder", startMarketCap: 27_000 },
-      { name: "Frog Fold", ticker: "FROG", feeDestination: "creator", startMarketCap: 24_000 },
-      { name: "Box Vault", ticker: "BOXV", feeDestination: "buyback", startMarketCap: 22_500 },
+      { name: "Be Like Jose", ticker: "BELIKEJOSE", feeDestination: "holder", startMarketCap: 110_000 },
+      { name: "Elonjose", ticker: "ELONJOSE", feeDestination: "creator", startMarketCap: 88_000 },
+      { name: "Jose", ticker: "JOSE", feeDestination: "buyback", startMarketCap: 76_000 },
     ],
   },
 ];
@@ -139,16 +101,16 @@ export interface RewardEvent {
 }
 
 export const MOCK_HOLDINGS: Holding[] = [
-  { narrativeSlug: "animal-revolution", narrativeName: "The Animal Revolution", ticker: "DOGREV", tokenIndex: 0, balance: 1_240_500, avgCostUsd: 312.4 },
-  { narrativeSlug: "animal-revolution", narrativeName: "The Animal Revolution", ticker: "WOLFREV", tokenIndex: 1, balance: 388_200, avgCostUsd: 98.1 },
-  { narrativeSlug: "neon-district", narrativeName: "Neon District", ticker: "ARCADE", tokenIndex: 0, balance: 512_000, avgCostUsd: 74.6 },
-  { narrativeSlug: "deep-harvest", narrativeName: "Deep Harvest", ticker: "MOON", tokenIndex: 2, balance: 905_750, avgCostUsd: 61.2 },
+  { narrativeSlug: "nvidia-ceo-cheating", narrativeName: "NVIDIA CEO CHEATING", ticker: "PUSSYCOIN", tokenIndex: 0, balance: 1_240_500, avgCostUsd: 312.4 },
+  { narrativeSlug: "nvidia-ceo-cheating", narrativeName: "NVIDIA CEO CHEATING", ticker: "JENSENHUANG", tokenIndex: 1, balance: 388_200, avgCostUsd: 98.1 },
+  { narrativeSlug: "elon-musk-favorite-meme", narrativeName: "ELON MUSK FAVORITE MEME", ticker: "BELIKEJOSE", tokenIndex: 0, balance: 512_000, avgCostUsd: 74.6 },
+  { narrativeSlug: "elon-musk-favorite-meme", narrativeName: "ELON MUSK FAVORITE MEME", ticker: "JOSE", tokenIndex: 2, balance: 905_750, avgCostUsd: 61.2 },
 ];
 
 export const MOCK_REWARDS: RewardEvent[] = [
-  { id: "r1", narrativeSlug: "animal-revolution", narrativeName: "The Animal Revolution", kind: "holder", ticker: "DOGREV", amountUsd: 18.42, detail: "1% leg fees from 24 coordinated buys", at: new Date(Date.now() - 1000 * 60 * 42).toISOString(), claimed: false },
-  { id: "r2", narrativeSlug: "neon-district", narrativeName: "Neon District", kind: "holder", ticker: "ARCADE", amountUsd: 6.08, detail: "1% leg fees from 11 coordinated buys", at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(), claimed: false },
-  { id: "r3", narrativeSlug: "animal-revolution", narrativeName: "The Animal Revolution", kind: "creator", ticker: "WOLFREV", amountUsd: 44.9, detail: "Creator share accrued to 0x7f…3aQ2", at: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(), claimed: true },
-  { id: "r4", narrativeSlug: "animal-revolution", narrativeName: "The Animal Revolution", kind: "buyback", ticker: "BEARREV", amountUsd: 31.75, detail: "12,400 BEARREV bought back and burned", at: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(), claimed: true },
-  { id: "r5", narrativeSlug: "deep-harvest", narrativeName: "Deep Harvest", kind: "buyback", ticker: "MOON", amountUsd: 9.2, detail: "28,900 MOON bought back and burned", at: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(), claimed: true },
+  { id: "r1", narrativeSlug: "nvidia-ceo-cheating", narrativeName: "NVIDIA CEO CHEATING", kind: "holder", ticker: "PUSSYCOIN", amountUsd: 18.42, detail: "1% leg fees from 24 coordinated buys", at: new Date(Date.now() - 1000 * 60 * 42).toISOString(), claimed: false },
+  { id: "r2", narrativeSlug: "elon-musk-favorite-meme", narrativeName: "ELON MUSK FAVORITE MEME", kind: "holder", ticker: "BELIKEJOSE", amountUsd: 6.08, detail: "1% leg fees from 11 coordinated buys", at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(), claimed: false },
+  { id: "r3", narrativeSlug: "nvidia-ceo-cheating", narrativeName: "NVIDIA CEO CHEATING", kind: "creator", ticker: "JENSENHUANG", amountUsd: 44.9, detail: "Creator share accrued to 0x7f…3aQ2", at: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(), claimed: true },
+  { id: "r4", narrativeSlug: "nvidia-ceo-cheating", narrativeName: "NVIDIA CEO CHEATING", kind: "buyback", ticker: "CHEATING", amountUsd: 31.75, detail: "12,400 CHEATING bought back and burned", at: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(), claimed: true },
+  { id: "r5", narrativeSlug: "elon-musk-favorite-meme", narrativeName: "ELON MUSK FAVORITE MEME", kind: "buyback", ticker: "JOSE", amountUsd: 9.2, detail: "28,900 JOSE bought back and burned", at: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(), claimed: true },
 ];

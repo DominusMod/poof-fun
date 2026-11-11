@@ -36,7 +36,7 @@ export default function DraftResolver({ slug }: { slug: string }) {
           title="Narrative not found"
           body="This narrative does not exist in the mock dataset or in your local drafts."
           action={
-            <Link href="/discover/rising">
+            <Link href="/discover/trending">
               <PrimaryButton>Back to Discover</PrimaryButton>
             </Link>
           }
@@ -49,7 +49,7 @@ export default function DraftResolver({ slug }: { slug: string }) {
 
   return (
     <div>
-      <Link href="/discover/rising" className="text-sm font-semibold" style={{ color: "var(--text-3)" }}>
+      <Link href="/discover/trending" className="text-sm font-semibold" style={{ color: "var(--text-3)" }}>
         ← Discover
       </Link>
       <div className="mb-6 mt-2">

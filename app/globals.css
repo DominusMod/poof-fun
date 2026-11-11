@@ -2,63 +2,63 @@
 
 @theme inline {
   --font-sans: var(--font-inter);
-  --font-display: var(--font-space-grotesk);
 }
 
-/* ---- poof.fun design tokens ---- */
-:root {
+/* ================= poof.fun themes =================
+   Ink Smoke (dark, default) and Cold Paper (light).
+   Selected via [data-theme] on <html>, set pre-paint
+   by an inline script to avoid flashing. */
+
+:root,
+:root[data-theme="smoke"] {
   color-scheme: dark;
   --bg: #131210;
-  --bg-2: #1a1816;
-  --surface: #1b1917;
-  --surface-2: #211e1a;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-2: rgba(255, 255, 255, 0.14);
-  --text: #f2ede1;
-  --text-2: #c9bda6;
-  --text-3: #8f8570;
+  --bg-2: #1b1815;
+  --surface: #1b1815;
+  --surface-2: #23201b;
+  --line: #37332d;
+  --line-2: #4d463c;
+  --text: #ede9e3;
+  --text-2: #a8a299;
+  --text-3: #767065;
   --up: #4ade80;
   --down: #fb7185;
   --warn: #f0b429;
   --tok-a: #f5820b; /* orange — token A */
   --tok-b: #4f8ff7; /* blue — token B */
   --tok-c: #3fce6f; /* green — token C */
+  --font-display: var(--font-space-grotesk);
   --radius: 8px;
   --page: 1280px;
   --gutter: 24px;
 }
 
-:root[data-theme="light"] {
+:root[data-theme="paper"] {
   color-scheme: light;
-  --bg: #faf7f0;
-  --bg-2: #f1ece1;
+  --bg: #eef1f4;
+  --bg-2: #e2e7ec;
   --surface: #ffffff;
-  --surface-2: #f4efe4;
-  --line: rgba(30, 24, 12, 0.1);
-  --line-2: rgba(30, 24, 12, 0.18);
-  --text: #1d1912;
-  --text-2: #57503f;
-  --text-3: #8a8172;
+  --surface-2: #e7ecf0;
+  --line: #c9d1da;
+  --line-2: #a9b4c1;
+  --text: #18222e;
+  --text-2: #4f5e6e;
+  --text-3: #7d8b99;
   --up: #15803d;
-  --down: #e11d48;
+  --down: #d92d20;
   --warn: #b45309;
+  --tok-a: #f5820b;
+  --tok-b: #4f8ff7;
+  --tok-c: #3fce6f;
+  --font-display: var(--font-fraunces);
+  --radius: 8px;
+  --page: 1280px;
+  --gutter: 24px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    color-scheme: light;
-    --bg: #faf7f0;
-    --bg-2: #f1ece1;
-    --surface: #ffffff;
-    --surface-2: #f4efe4;
-    --line: rgba(30, 24, 12, 0.1);
-    --line-2: rgba(30, 24, 12, 0.18);
-    --text: #1d1912;
-    --text-2: #57503f;
-    --text-3: #8a8172;
-    --up: #15803d;
-    --down: #e11d48;
-    --warn: #b45309;
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
   }
 }
 
@@ -71,14 +71,22 @@ body {
   color: var(--text);
   font-family: var(--font-sans), Inter, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-display), "Space Grotesk", Inter, sans-serif;
+  font-family: var(--font-display), "Space Grotesk", Inter, serif;
   letter-spacing: -0.01em;
+}
+
+:root[data-theme="paper"] h1,
+:root[data-theme="paper"] h2,
+:root[data-theme="paper"] h3,
+:root[data-theme="paper"] .font-display {
+  letter-spacing: 0;
 }
 
 .tnum,
@@ -92,8 +100,278 @@ table.data,
   margin-inline: auto;
 }
 
-@media (max-width: 640px) {
-  :root {
-    --gutter: 16px;
+/* Keep page content above the ambient fragment canvas. */
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--tok-b);
+  outline-offset: 2px;
+}
+
+/* ================= buttons ================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line-2);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-2);
+}
+
+/* ================= landing hero ================= */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: min(74vh, 660px);
+  padding: 9vh 0 7vh;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.hero-eyebrow .dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.hero-eyebrow .dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: block;
+}
+
+/* Bold purple shiny/glowing brand text on the landing hero. */
+.brand-glow {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: normal;
+  text-transform: none;
+  background-image: linear-gradient(
+    105deg,
+    #c084fc 20%,
+    #a855f7 40%,
+    #f5e9ff 50%,
+    #a855f7 60%,
+    #c084fc 80%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.55))
+    drop-shadow(0 0 18px rgba(168, 85, 247, 0.25));
+  animation: brand-glow 4s ease-in-out infinite;
+}
+
+@keyframes brand-glow {
+  0%,
+  100% {
+    background-position: 110% 0;
+  }
+  50% {
+    background-position: -10% 0;
+  }
+}
+
+.headline {
+  margin: 1.4rem 0 0;
+  font-family: var(--font-display), "Space Grotesk", Inter, serif;
+  font-size: clamp(2.9rem, 8.5vw, 5.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  text-wrap: balance;
+  max-width: 16ch;
+}
+
+:root[data-theme="paper"] .headline {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Slow tri-colour sheen travelling through the headline. */
+.headline-sheen {
+  background-image: linear-gradient(
+    105deg,
+    var(--text) 38%,
+    color-mix(in srgb, var(--tok-a) 60%, var(--text)) 46%,
+    color-mix(in srgb, var(--tok-b) 60%, var(--text)) 50%,
+    color-mix(in srgb, var(--tok-c) 60%, var(--text)) 54%,
+    var(--text) 62%
+  );
+  background-size: 280% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: headline-sheen 9s ease-in-out infinite;
+}
+
+@keyframes headline-sheen {
+  0%,
+  100% {
+    background-position: 115% 0;
+  }
+  50% {
+    background-position: -15% 0;
+  }
+}
+
+/* Blinking block caret trailing the headline. */
+.headline-caret {
+  display: inline-block;
+  width: 0.085em;
+  height: 0.9em;
+  margin-left: 0.08em;
+  transform: translateY(0.1em);
+  background: var(--text);
+  animation: caret-blink 1.12s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero-sub {
+  margin: 1.4rem 0 0;
+  max-width: 46ch;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-2);
+  text-wrap: balance;
+}
+
+.hero-actions {
+  margin-top: 2.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.hero-note {
+  margin: 2.4rem 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+
+/* ================= ambient canvas ================= */
+
+.fragment-field {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  animation: fragment-fade 1.6s ease-out;
+}
+
+@keyframes fragment-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ================= header menu ================= */
+
+.menu-panel {
+  animation: drawer-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (min-width: 768px) {
+  .menu-panel {
+    animation: menu-in 0.18s ease-out;
+    transform-origin: top right;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ================= reduced motion ================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .headline-sheen,
+  .headline-caret,
+  .fragment-field,
+  .menu-panel,
+  .brand-glow {
+    animation: none;
   }
 }

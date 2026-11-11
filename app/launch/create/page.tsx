@@ -95,7 +95,7 @@ export default function CreatePage() {
               <input
                 className="w-full rounded-md border px-3 py-2.5 text-sm outline-none"
                 style={inputStyle}
-                placeholder="e.g. The Animal Revolution"
+                placeholder="e.g. NVIDIA CEO CHEATING"
                 value={narrativeName}
                 onChange={(e) => setNarrativeName(e.target.value)}
               />
@@ -130,7 +130,7 @@ export default function CreatePage() {
                 <input
                   className="w-full rounded-md border px-3 py-2.5 text-sm outline-none"
                   style={inputStyle}
-                  placeholder={["Dog Revolution", "Wolf Revolution", "Bear Revolution"][i]}
+                  placeholder={["Pussycoin", "Jensen Huang", "Cheating"][i]}
                   value={t.name}
                   onChange={(e) => setToken(i, { name: e.target.value })}
                 />
@@ -139,7 +139,7 @@ export default function CreatePage() {
                 <input
                   className="w-full rounded-md border px-3 py-2.5 text-sm uppercase outline-none"
                   style={inputStyle}
-                  placeholder={["DOGREV", "WOLFREV", "BEARREV"][i]}
+                  placeholder={["PUSSYCOIN", "JENSENHUANG", "CHEATING"][i]}
                   value={t.ticker}
                   onChange={(e) => setToken(i, { ticker: e.target.value })}
                 />

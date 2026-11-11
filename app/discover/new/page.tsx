@@ -16,7 +16,7 @@ export default function NewPage() {
       </div>
       <NarrativeTable items={items} />
       <NarrativeCards items={items} />
-      <PrevNext prev={{ href: "/discover/rising", label: "Rising" }} next={{ href: "/discover/top", label: "Top" }} />
+      <PrevNext prev={{ href: "/discover/trending", label: "Trending" }} next={{ href: "/discover/top", label: "Top" }} />
     </div>
   );
 }

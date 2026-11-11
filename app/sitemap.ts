@@ -4,18 +4,15 @@ import { listDocs } from "@/lib/docs";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://poof.fun";
 
 const STATIC_ROUTES = [
-  "/discover/rising",
+  "/discover/trending",
   "/discover/new",
   "/discover/top",
   "/launch/create",
   "/launch/mine",
   "/portfolio/holdings",
   "/portfolio/rewards",
-  "/narrative/animal-revolution",
-  "/narrative/neon-district",
-  "/narrative/deep-harvest",
-  "/narrative/orbital-dock",
-  "/narrative/paper-empire",
+  "/narrative/nvidia-ceo-cheating",
+  "/narrative/elon-musk-favorite-meme",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

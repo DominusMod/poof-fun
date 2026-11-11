@@ -63,6 +63,7 @@ export function draftToNarrative(d: LaunchDraft): Narrative {
     createdAt: d.createdAt,
     volume24h: 0,
     change24h: 0,
+    holders: 0,
     tokens: d.tokens,
     allocation: d.allocation,
   };

@@ -17,9 +17,9 @@ import { Card, CardHead, Chip, Field, GhostButton, inputStyle, Notice, PrimaryBu
 const COLORS = ["var(--tok-a)", "var(--tok-b)", "var(--tok-c)"] as const;
 
 const DEMO_DEFS = [
-  { name: "Dog Revolution", ticker: "DOGREV", feeDestination: "holder" as const, startMarketCap: 120_000 },
-  { name: "Wolf Revolution", ticker: "WOLFREV", feeDestination: "creator" as const, startMarketCap: 96_000 },
-  { name: "Bear Revolution", ticker: "BEARREV", feeDestination: "buyback" as const, startMarketCap: 84_000 },
+  { name: "Pussycoin", ticker: "PUSSYCOIN", feeDestination: "holder" as const, startMarketCap: 140_000 },
+  { name: "Jensen Huang", ticker: "JENSENHUANG", feeDestination: "creator" as const, startMarketCap: 112_000 },
+  { name: "Cheating", ticker: "CHEATING", feeDestination: "buyback" as const, startMarketCap: 98_000 },
 ];
 
 interface Check {
@@ -117,7 +117,7 @@ export default function EngineDemo() {
   return (
     <Card>
       <CardHead
-        title="Live engine demo — THE ANIMAL REVOLUTION"
+        title="Live engine demo — NVIDIA CEO CHEATING"
         aside={<Chip>lib/engine.ts</Chip>}
       />
       <div className="flex flex-col gap-4 p-4 sm:p-5">

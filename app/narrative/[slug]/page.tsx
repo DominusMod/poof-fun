@@ -7,10 +7,7 @@ export default async function NarrativePage({ params }: { params: Promise<{ slug
 
 export function generateStaticParams() {
   return [
-    { slug: "animal-revolution" },
-    { slug: "neon-district" },
-    { slug: "deep-harvest" },
-    { slug: "orbital-dock" },
-    { slug: "paper-empire" },
+    { slug: "nvidia-ceo-cheating" },
+    { slug: "elon-musk-favorite-meme" },
   ];
 }

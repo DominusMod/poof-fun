@@ -93,7 +93,7 @@ export default function HoldingsPage() {
             title="No holdings yet"
             body="Buy a token on any narrative page and it will show up here."
             action={
-              <Link href="/discover/rising">
+              <Link href="/discover/trending">
                 <PrimaryButton>Discover narratives</PrimaryButton>
               </Link>
             }

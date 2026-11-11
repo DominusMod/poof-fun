@@ -2,18 +2,15 @@ import Link from "next/link";
 import { fmtPct, fmtUsd } from "@/lib/engine";
 import { narrativeStartCap, type Narrative } from "@/lib/mock";
 
-function TokenDots({ n }: { n: Narrative }) {
-  const colors = ["var(--tok-a)", "var(--tok-b)", "var(--tok-c)"];
+function TokenCount({ n }: { n: Narrative }) {
+  const count = n.tokens.length;
   return (
-    <span className="inline-flex items-center gap-1" aria-hidden>
-      {n.tokens.map((t, i) => (
-        <span
-          key={t.ticker}
-          title={t.ticker}
-          className="inline-block h-2.5 w-2.5 rounded-full"
-          style={{ background: colors[i] }}
-        />
-      ))}
+    <span
+      className="tnum inline-flex min-w-8 items-center justify-center rounded-full border px-2.5 py-0.5 text-xs font-bold"
+      style={{ borderColor: "var(--line-2)", color: "var(--text)" }}
+      title={`${count} ${count === 1 ? "token" : "tokens"} launched in this narrative`}
+    >
+      {count}
     </span>
   );
 }
@@ -24,12 +21,13 @@ export function NarrativeTable({ items }: { items: Narrative[] }) {
     <div className="hidden overflow-x-auto rounded-lg border md:block" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
       <table className="data w-full border-collapse text-[13.5px]">
         <thead>
-          <tr style={{ color: "var(--text-3)" }}>
-            <th className="px-3 py-2.5 text-left text-xs font-semibold">Narrative</th>
-            <th className="px-3 py-2.5 text-left text-xs font-semibold">Tokens</th>
-            <th className="px-3 py-2.5 text-right text-xs font-semibold">Market cap</th>
-            <th className="px-3 py-2.5 text-right text-xs font-semibold">24h vol</th>
-            <th className="px-3 py-2.5 text-right text-xs font-semibold">24h</th>
+          <tr style={{ color: "var(--text)" }}>
+            <th className="px-3 py-2.5 text-left text-sm font-bold">Narrative</th>
+            <th className="px-3 py-2.5 text-left text-sm font-bold">Tokens</th>
+            <th className="px-3 py-2.5 text-right text-sm font-bold">Holders</th>
+            <th className="px-3 py-2.5 text-right text-sm font-bold">Market cap</th>
+            <th className="px-3 py-2.5 text-right text-sm font-bold">24h vol</th>
+            <th className="px-3 py-2.5 text-right text-sm font-bold">24h</th>
           </tr>
         </thead>
         <tbody>
@@ -44,8 +42,9 @@ export function NarrativeTable({ items }: { items: Narrative[] }) {
                 </div>
               </td>
               <td className="px-3 py-3">
-                <TokenDots n={n} />
+                <TokenCount n={n} />
               </td>
+              <td className="tnum px-3 py-3 text-right">{n.holders.toLocaleString("en-US")}</td>
               <td className="tnum px-3 py-3 text-right">{fmtUsd(narrativeStartCap(n))}</td>
               <td className="tnum px-3 py-3 text-right">{fmtUsd(n.volume24h)}</td>
               <td
@@ -83,10 +82,13 @@ export function NarrativeCards({ items }: { items: Narrative[] }) {
             </span>
           </div>
           <div className="mt-1 flex items-center gap-2 text-xs" style={{ color: "var(--text-3)" }}>
-            <TokenDots n={n} />
+            <TokenCount n={n} />
             <span>{n.tokens.map((t) => t.ticker).join(" · ")}</span>
           </div>
           <div className="mt-3 flex items-center justify-between text-[13px]">
+            <span style={{ color: "var(--text-3)" }}>
+              Holders <span className="tnum font-semibold" style={{ color: "var(--text)" }}>{n.holders.toLocaleString("en-US")}</span>
+            </span>
             <span style={{ color: "var(--text-3)" }}>
               MCap <span className="tnum font-semibold" style={{ color: "var(--text)" }}>{fmtUsd(narrativeStartCap(n))}</span>
             </span>
