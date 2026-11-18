@@ -1,251 +1,156 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useTheme } from './ThemeProvider';
 
-interface Shard {
-  x: number;
-  y: number;
-  size: number;
-  angle: number;
-  spin: number;
-  vx: number;
-  vy: number;
-  phase: number;
-  fadeSpeed: number;
-  alpha: number;
-  color: string;
-  radii: [number, number, number, number];
-  skew: [number, number, number, number];
-  ox: number;
-  oy: number;
-  ovx: number;
-  ovy: number;
+interface PoofSettings {
+cols: string[];
+a: number;
+N: number;
+dur: number;
+sp: number;
+y: number;
+wave: number;
+sw: number;
+sz: number;
+bl: number;
+mb: string;
 }
 
-interface Palette {
-  colors: string[];
-  tinted: string[];
-  tintCount: number;
-  sizeMin: number;
-  sizeMax: number;
-  alphaMin: number;
-  alphaMax: number;
-  tintAlphaMin: number;
-  tintAlphaMax: number;
-  vyMin: number;
-  vyMax: number;
-  vxMax: number;
+interface PoofParticle {
+ox: number;
+oy: number;
+r: number;
+ph: number;
+c: string;
 }
 
-/** Ink Smoke: large soft off-white shards, three tinted for the tokens. */
-const SMOKE: Palette = {
-  colors: ['#EDE9E3'],
-  tinted: ['#f5820b', '#4f8ff7', '#3fce6f'],
-  tintCount: 3,
-  sizeMin: 30,
-  sizeMax: 96,
-  alphaMin: 0.025,
-  alphaMax: 0.06,
-  tintAlphaMin: 0.05,
-  tintAlphaMax: 0.09,
-  vyMin: -14,
-  vyMax: -5,
-  vxMax: 7,
-};
-
-/** Cold Paper: thin charcoal/slate torn-paper fragments. */
-const PAPER: Palette = {
-  colors: ['#2B3A4A', '#5C6B7C', '#8796A6'],
-  tinted: [],
-  tintCount: 0,
-  sizeMin: 14,
-  sizeMax: 46,
-  alphaMin: 0.05,
-  alphaMax: 0.11,
-  tintAlphaMin: 0.05,
-  tintAlphaMax: 0.11,
-  vyMin: -10,
-  vyMax: -3,
-  vxMax: 9,
-};
-
-function rand(min: number, max: number) {
-  return min + Math.random() * (max - min);
-}
-
-function makeShards(w: number, h: number, p: Palette): Shard[] {
-  const count = Math.round(Math.min(80, Math.max(26, (w * h) / 26000)));
-  const shards: Shard[] = [];
-  for (let i = 0; i < count; i++) {
-    const tinted = i < p.tintCount;
-    shards.push({
-      x: rand(0, w),
-      y: rand(0, h),
-      size: rand(p.sizeMin, p.sizeMax),
-      angle: rand(0, Math.PI * 2),
-      spin: rand(-0.15, 0.15),
-      vx: rand(-p.vxMax, p.vxMax),
-      vy: rand(p.vyMin, p.vyMax),
-      phase: rand(0, Math.PI * 2),
-      fadeSpeed: rand(0.15, 0.4),
-      alpha: tinted ? rand(p.tintAlphaMin, p.tintAlphaMax) : rand(p.alphaMin, p.alphaMax),
-      color: tinted ? p.tinted[i % p.tinted.length] : p.colors[i % p.colors.length],
-      radii: [rand(0.55, 1), rand(0.55, 1), rand(0.55, 1), rand(0.55, 1)],
-      skew: [rand(-0.45, 0.45), rand(-0.45, 0.45), rand(-0.45, 0.45), rand(-0.45, 0.45)],
-      ox: 0,
-      oy: 0,
-      ovx: 0,
-      ovy: 0,
-    });
-  }
-  return shards;
-}
-
-function drawShard(ctx: CanvasRenderingContext2D, s: Shard, alpha: number) {
-  ctx.save();
-  ctx.translate(s.x + s.ox, s.y + s.oy);
-  ctx.rotate(s.angle);
-  ctx.globalAlpha = alpha;
-  ctx.fillStyle = s.color;
-  ctx.beginPath();
-  for (let k = 0; k < 4; k++) {
-    const ang = (k * Math.PI) / 2 + s.skew[k];
-    const r = s.size * s.radii[k];
-    const px = Math.cos(ang) * r;
-    const py = Math.sin(ang) * r * 0.62;
-    if (k === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
-  }
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
+interface Poof {
+ps: PoofParticle[];
+cy: number;
 }
 
 /**
- * Ambient background fragment field. Theme-adaptive, pointer-reactive,
- * and static when the user prefers reduced motion.
+ * Poof glow background — engine logic exactly as specified; only the
+ * theme keys are repo-aware (smoke/paper) so the existing toggle and
+ * device default keep working, and the canvas is owned by React
+ * (client effect only, never double-loaded).
  */
 export default function FragmentField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { resolved } = useTheme();
+const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+useEffect(() => {
+const cv = canvasRef.current;
+if (!cv || cv.dataset.poofRunning === '1') return;
+const ctx = cv.getContext('2d');
+if (!ctx) return;
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+cv.dataset.poofRunning = '1';
 
-    const palette = resolved === 'paper' ? PAPER : SMOKE;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    let shards = makeShards(w, h, palette);
+const T: { light: PoofSettings; dark: PoofSettings } = {
+light: { cols: ['255,255,255', '255,232,250'], a: .75, N: 36, dur: 11000, sp: 1, y: .5, wave: .12, sw: 0, sz: 1.05, bl: 9, mb: 'normal' },
+dark: { cols: ['150,175,235', '210,225,255'], a: .38, N: 38, dur: 10000, sp: 1, y: .5, wave: .04, sw: 0, sz: 1.1, bl: 10, mb: 'screen' },
+};
 
-    function resize() {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas!.width = Math.round(w * dpr);
-      canvas!.height = Math.round(h * dpr);
-      canvas!.style.width = `${w}px`;
-      canvas!.style.height = `${h}px`;
-      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    resize();
+const root = document.documentElement;
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+let W: number;
+let H: number;
+let v: PoofSettings;
+let puff: Poof | null = null;
+let begin = 0;
+let gap = 0;
+let raf = 0;
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      ctx.clearRect(0, 0, w, h);
-      for (const s of shards) drawShard(ctx, s, s.alpha * 0.8);
-      const onResize = () => {
-        resize();
-        shards = makeShards(w, h, palette);
-        ctx!.clearRect(0, 0, w, h);
-        for (const s of shards) drawShard(ctx!, s, s.alpha * 0.8);
-      };
-      window.addEventListener('resize', onResize);
-      return () => window.removeEventListener('resize', onResize);
-    }
+function size(): void {
+const d = Math.min(window.devicePixelRatio || 1, 2);
+W = window.innerWidth;
+H = window.innerHeight;
+cv!.width = W * d;
+cv!.height = H * d;
+ctx!.setTransform(d, 0, 0, d, 0, 0);
+}
+window.addEventListener('resize', size);
+size();
 
-    const pointer = { x: -9999, y: -9999, active: false };
-    const onMove = (e: PointerEvent) => {
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
-      pointer.active = true;
-    };
-    const onUp = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') pointer.active = false;
-    };
-    const onLeave = () => {
-      pointer.active = false;
-    };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    window.addEventListener('pointerdown', onMove, { passive: true });
-    window.addEventListener('pointerup', onUp, { passive: true });
-    window.addEventListener('pointercancel', onLeave, { passive: true });
-    document.documentElement.addEventListener('pointerleave', onLeave);
-    window.addEventListener('resize', resize);
+const sm = (a: number, b: number, t: number): number => { t = Math.max(0, Math.min(1, (t - a) / (b - a))); return t * t * (3 - 2 * t); };
 
-    const SCATTER_RADIUS = 150;
-    let raf = 0;
-    let last = performance.now();
+function mk(): Poof {
+const ps: PoofParticle[] = [];
+for (let i = 0; i < v.N; i++) ps.push({
+ox: -Math.random() * 1.1 + .12,
+oy: Math.random() + Math.random() - 1,
+r: .5 + Math.random() * .7,
+ph: Math.random() * 6.28,
+c: v.cols[i % v.cols.length],
+});
+return { ps, cy: H * (v.y + (Math.random() - .5) * .14) };
+}
 
-    function frame(now: number) {
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
-      const t = now / 1000;
-      ctx!.clearRect(0, 0, w, h);
+function frame(now: number): void {
+ctx!.clearRect(0, 0, W, H);
+if (!puff && now >= gap) { puff = mk(); begin = now; } /* one puff per left-to-right travel */
+if (puff) {
+const t = (now - begin) / v.dur;
+if (t >= 1) { puff = null; gap = now + 800; }
+else {
+const e = 1 - Math.pow(1 - t, 2),
+base = Math.min(W, H) * .16 * v.sz,
+env = sm(0, .12, t) * (1 - sm(.62, 1, t)),
+cx = -W * .2 + e * W * 1.45;
+for (const p of puff.ps) {
+const dx = p.ox * W * .55 * (.3 + e),
+dy = p.oy * H * .55 * (.15 + e * v.sp) + Math.sin(t * 6.28 + p.ph) * H * v.wave,
+an = e * v.sw * p.r, co = Math.cos(an), si = Math.sin(an),
+px = cx + dx * co - dy * si,
+py = puff.cy + dx * si + dy * co,
+r = base * p.r * (.35 + 1.7 * e),
+a = v.a * env * (.6 + .4 * p.r);
+if (a < .003) continue;
+const g = ctx!.createRadialGradient(px, py, 0, px, py, r);
+g.addColorStop(0, `rgba(${p.c},${a})`);
+g.addColorStop(.5, `rgba(${p.c},${a * .5})`);
+g.addColorStop(1, `rgba(${p.c},0)`);
+ctx!.fillStyle = g;
+ctx!.beginPath();
+ctx!.arc(px, py, r, 0, 6.2832);
+ctx!.fill();
+}
+}
+}
+raf = requestAnimationFrame(frame);
+}
 
-      for (const s of shards) {
-        s.x += s.vx * dt;
-        s.y += s.vy * dt;
-        s.angle += s.spin * dt;
+function mode(): 'light' | 'dark' {
+const t = root.getAttribute('data-theme');
+if (t === 'light' || t === 'paper') return 'light';
+if (t === 'dark' || t === 'smoke') return 'dark';
+return mq.matches ? 'dark' : 'light';
+}
+function apply(): void {
+v = T[mode()];
+puff = null;
+gap = 0;
+cv!.style.filter = 'blur(' + v.bl + 'px)';
+cv!.style.mixBlendMode = v.mb;
+}
+mq.addEventListener('change', apply);
 
-        // Scatter away from the cursor/finger, then ease back.
-        if (pointer.active) {
-          const dx = s.x + s.ox - pointer.x;
-          const dy = s.y + s.oy - pointer.y;
-          const d = Math.hypot(dx, dy);
-          if (d < SCATTER_RADIUS && d > 0.01) {
-            const f = (1 - d / SCATTER_RADIUS) * 900;
-            s.ovx += (dx / d) * f * dt;
-            s.ovy += (dy / d) * f * dt;
-          }
-        }
-        s.ovx += (-s.ox * 2.2 - s.ovx * 2.8) * dt;
-        s.ovy += (-s.oy * 2.2 - s.ovy * 2.8) * dt;
-        s.ox += s.ovx * dt;
-        s.oy += s.ovy * dt;
+// optional: setPoofTheme('light' | 'dark' | 'auto')
+(window as unknown as { setPoofTheme: (m: string) => void }).setPoofTheme = function (m: string): void {
+if (m === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', m);
+apply();
+};
 
-        // Wrap around the viewport with a margin.
-        const m = s.size * 1.5;
-        if (s.y < -m) {
-          s.y = h + m;
-          s.x = rand(0, w);
-        } else if (s.y > h + m) {
-          s.y = -m;
-          s.x = rand(0, w);
-        }
-        if (s.x < -m) s.x = w + m;
-        else if (s.x > w + m) s.x = -m;
+apply();
+raf = requestAnimationFrame(frame);
 
-        const a = s.alpha * (0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * s.fadeSpeed + s.phase)));
-        drawShard(ctx!, s, a);
-      }
-      raf = requestAnimationFrame(frame);
-    }
-    raf = requestAnimationFrame(frame);
+return () => {
+cancelAnimationFrame(raf);
+window.removeEventListener('resize', size);
+mq.removeEventListener('change', apply);
+delete cv.dataset.poofRunning;
+};
+}, []);
 
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerdown', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onLeave);
-      document.documentElement.removeEventListener('pointerleave', onLeave);
-      window.removeEventListener('resize', resize);
-    };
-  }, [resolved]);
-
-  return <canvas ref={canvasRef} className="fragment-field" aria-hidden="true" />;
+return <canvas id="poof-canvas" ref={canvasRef} className="fragment-field" aria-hidden="true" />;
 }

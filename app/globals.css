@@ -295,6 +295,37 @@ footer {
   text-wrap: balance;
 }
 
+/* Slow modern blue shine for the landing subtitle: bold italic text
+with a soft blue sheen travelling through it. */
+.hero-sub-glow {
+  font-style: italic;
+  font-weight: 700;
+  background-image: linear-gradient(
+    100deg,
+    var(--tok-b) 30%,
+    color-mix(in srgb, #ffffff 55%, var(--tok-b)) 46%,
+    #ffffff 50%,
+    color-mix(in srgb, #ffffff 55%, var(--tok-b)) 54%,
+    var(--tok-b) 70%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--tok-b) 45%, transparent));
+  animation: hero-sub-shine 5.5s ease-in-out infinite;
+}
+
+@keyframes hero-sub-shine {
+  0%,
+  100% {
+    background-position: 115% 0;
+  }
+  50% {
+    background-position: -15% 0;
+  }
+}
+
 .hero-actions {
   margin-top: 2.2rem;
   display: flex;
