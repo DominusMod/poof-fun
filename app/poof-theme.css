@@ -1,0 +1,57 @@
+/* LIGHT = Style 4 */
+:root{
+  --poof-bg:linear-gradient(160deg,#f3eeff,#d9d0f7);
+  --poof-ink:#2e2556;
+  --poof-muted:#6c63a0;
+  --poof-accent:#2e2556;
+  --poof-accent-ink:#f6f2ff;
+  color-scheme:light;
+}
+/* DARK = Style 5 */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --poof-bg:linear-gradient(170deg,#0f1830,#1f2f55);
+    --poof-ink:#eef3ff;
+    --poof-muted:#9fb0d6;
+    --poof-accent:#eef3ff;
+    --poof-accent-ink:#0f1830;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --poof-bg:linear-gradient(170deg,#0f1830,#1f2f55);
+  --poof-ink:#eef3ff;--poof-muted:#9fb0d6;--poof-accent:#eef3ff;--poof-accent-ink:#0f1830;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --poof-bg:linear-gradient(160deg,#f3eeff,#d9d0f7);
+  --poof-ink:#2e2556;--poof-muted:#6c63a0;--poof-accent:#2e2556;--poof-accent-ink:#f6f2ff;
+  color-scheme:light;
+}
+
+html{background:var(--poof-bg) !important;background-attachment:fixed;min-height:100%}
+html body,
+html #root,
+html #__next,
+html #app,
+html main,
+html .app,
+html .wrapper{
+  background:transparent !important;
+  background-color:transparent !important;
+}
+#poof-canvas{
+  position:fixed !important;inset:0;width:100vw;height:100vh;
+  pointer-events:none;z-index:-1;
+}
+/* Repo keys: smoke = DARK (Style 5), paper = LIGHT (Style 4). Same values, placed last so they win. */
+:root[data-theme="smoke"]{
+  --poof-bg:linear-gradient(170deg,#0f1830,#1f2f55);
+  --poof-ink:#eef3ff;--poof-muted:#9fb0d6;--poof-accent:#eef3ff;--poof-accent-ink:#0f1830;
+  color-scheme:dark;
+}
+:root[data-theme="paper"]{
+  --poof-bg:linear-gradient(160deg,#f3eeff,#d9d0f7);
+  --poof-ink:#2e2556;--poof-muted:#6c63a0;--poof-accent:#2e2556;--poof-accent-ink:#f6f2ff;
+  color-scheme:light;
+}
